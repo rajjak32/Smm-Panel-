@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real SMM Panel - All in One</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        h2 {
+            color: #38bdf8;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        select:focus, input:focus {
+            border-color: #38bdf8;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #0284c7;
+            color: #fff;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .toggle-link a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* Dashboard Design */
+        .balance-card {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .balance-card h4 {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        .balance-card p {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .add-btn {
+            background: #fff;
+            color: #0284c7;
+            border: none;
+            padding: 8px 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .logout-btn {
+            background-color: #ef4444;
+            color: #fff;
+            margin-top: 15px;
+        }
+        .rate-info {
+            font-size: 12px;
+            color: #f59e0b;
+            margin-top: 4px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ১. লগইন ফর্ম -->
+    <div id="loginBox">
+        <h2>🔑 Login to Account</h2>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email / Username</label>
+                <input type="text" id="loginUser" placeholder="admin দিন" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="123456 দিন" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <div class="toggle-link">
+            Account নেই? <a onclick="showRegister()">Sign Up করুন</a>
+        </div>
+    </div>
+
+    <!-- ২. রেজিস্টার ফর্ম -->
+    <div id="registerBox" class="hidden">
+        <h2>📝 Create Account</h2>
+        <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="regName" placeholder="আপনার নাম" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="regEmail" placeholder="আপনার ইমেইল" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="regPass" placeholder="পাসওয়ার্ড দিন" required>
+            </div>
+            <button type="submit" class="btn">Register</button>
+        </form>
+        <div class="toggle-link">
+            আগে থেকেই Account আছে? <a onclick="showLogin()">Login করুন</a>
+        </div>
+    </div>
+
+    <!-- ৩. মূল ড্যাশবোর্ড -->
+    <div id="dashboardBox" class="hidden">
+        <h2>🚀 SMM Panel Service</h2>
+
+        <!-- ব্যালেন্স কার্ড -->
+        <div class="balance-card">
+            <div>
+                <h4>Account Balance</h4>
+                <p>৳ <span id="userBalance">500.00</span></p>
+            </div>
+            <button class="add-btn" onclick="addFunds()">Add Fund</button>
+        </div>
+
+        <!-- অর্ডার ফর্ম -->
+        <form id="smmForm" onsubmit="submitOrder(event)">
+            <div class="form-group">
+                <label>Category (ক্যাটাগরি)</label>
+                <select id="category" onchange="loadServices()">
+                    <option value="">-- Select Category --</option>
+                    <option value="youtube">YouTube Services</option>
+                    <option value="facebook">Facebook Services</option>
+                    <option value="tiktok">TikTok Services</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Service (সার্ভিস)</label>
+                <select id="service" onchange="calculatePrice()">
+                    <option value="">-- Select Service --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Target Link (লিংক)</label>
+                <input type="url" id="link" placeholder="https://" required>
+            </div>
+
+            <div class="form-group">
+                <label>Quantity (পরিমাণ)</label>
+                <input type="number" id="quantity" placeholder="1000" oninput="calculatePrice()" required>
+            </div>
+
+            <div class="form-group">
+                <label>Total Charge (মোট খরচ)</label>
+                <input type="text" id="charge" value="৳ 0.00" readonly>
+                <div class="rate-info" id="rateInfo"></div>
+            </div>
+
+            <button type="submit" class="btn">Submit Order</button>
+        </form>
+
+        <button onclick="handleLogout()" class="btn logout-btn">Logout</button>
+    </div>
+
+</div>
+
+<!-- জাভাস্ক্রিপ্ট কোড (HTML এর ভেতরেই যুক্ত) -->
+<script>
+    function showRegister() {
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("registerBox").classList.remove("hidden");
+    }
+
+    function showLogin() {
+        document.getElementById("registerBox").classList.add("hidden");
+        document.getElementById("loginBox").classList.remove("hidden");
+    }
+
+    function handleRegister(e) {
+        e.preventDefault();
+        const email = document.getElementById("regEmail").value;
+        const pass = document.getElementById("regPass").value;
+
+        localStorage.setItem("smm_user", email);
+        localStorage.setItem("smm_pass", pass);
+
+        alert("✅ রেজিস্ট্রেশন সফল হয়েছে! এখন লগইন করুন।");
+        showLogin();
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const user = document.getElementById("loginUser").value;
+        const pass = document.getElementById("loginPass").value;
+
+        const savedUser = localStorage.getItem("smm_user");
+        const savedPass = localStorage.getItem("smm_pass");
+
+        if ((user === savedUser && pass === savedPass) || (user === "admin" && pass === "123456")) {
+            document.getElementById("loginBox").classList.add("hidden");
+            document.getElementById("dashboardBox").classList.remove("hidden");
+        } else {
+            alert("❌ ইউজারনেম বা পাসওয়ার্ড ভুল! (টেস্ট করার জন্য: admin এবং 123456 দিন)");
+        }
+    }
+
+    function handleLogout() {
+        document.getElementById("dashboardBox").classList.add("hidden");
+        document.getElementById("loginBox").classList.remove("hidden");
+    }
+
+    const servicesData = {
+        youtube: [
+            { id: 101, name: "YouTube Real Views - ৳120 / 1K", rate: 120 },
+            { id: 102, name: "YouTube Subscribers - ৳450 / 1K", rate: 450 }
+        ],
+        facebook: [
+            { id: 201, name: "Facebook Page Followers - ৳180 / 1K", rate: 180 },
+            { id: 202, name: "Facebook Post Likes - ৳60 / 1K", rate: 60 }
+        ],
+        tiktok: [
+            { id: 301, name: "TikTok Video Views - ৳25 / 1K", rate: 25 },
+            { id: 302, name: "TikTok Followers - ৳200 / 1K", rate: 200 }
+        ]
+    };
+
+    function loadServices() {
+        const cat = document.getElementById("category").value;
+        const serviceSelect = document.getElementById("service");
+        serviceSelect.innerHTML = '<option value="">-- Select Service --</option>';
+
+        if (cat && servicesData[cat]) {
+            servicesData[cat].forEach(s => {
+                let opt = document.createElement("option");
+                opt.value = s.id;
+                opt.setAttribute("data-rate", s.rate);
+                opt.textContent = s.name;
+                serviceSelect.appendChild(opt);
+            });
+        }
+        calculatePrice();
+    }
+
+    function calculatePrice() {
+        const serviceSelect = document.getElementById("service");
+        const selected = serviceSelect.options[serviceSelect.selectedIndex];
+        const qty = parseFloat(document.getElementById("quantity").value) || 0;
+
+        if (selected && selected.getAttribute("data-rate")) {
+            const rate = parseFloat(selected.getAttribute("data-rate"));
+            const total = (qty / 1000) * rate;
+            document.getElementById("charge").value = "৳ " + total.toFixed(2);
+            document.getElementById("rateInfo").innerText = `১০০০ পিসের রেট: ৳ ${rate}`;
+        } else {
+            document.getElementById("charge").value = "৳ 0.00";
+            document.getElementById("rateInfo").innerText = "";
+        }
+    }
+
+    function addFunds() {
+        alert("বিকাশ বা নগদ পেমেন্ট অপশন এখানে যুক্ত হবে।");
+    }
+
+    function submitOrder(e) {
+        e.preventDefault();
+        const serviceId = document.getElementById("service").value;
+        const link = document.getElementById("link").value;
+        const qty = document.getElementById("quantity").value;
+        const charge = document.getElementById("charge").value;
+
+        if (!serviceId) {
+            alert("অনুগ্রহ করে একটি সার্ভিস সিলেক্ট করুন!");
+            return;
+        }
+
+        alert(`✅ অর্ডার সফলভাবে জমা হয়েছে!\n\nসার্ভিস ID: ${serviceId}\nলিংক: ${link}\nপরিমাণ: ${qty}\nমোট খরচ: ${charge}`);
+    }
+</script>
+
+</body>
+</html>
